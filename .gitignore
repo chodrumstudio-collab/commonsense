@@ -28,3 +28,7 @@ yarn-error.log*
 *.swp
 *.swo
 
+.vercel
+
+# Temporary icon generation files
+public/create-icon.js

@@ -1,0 +1,21 @@
+{
+  "name": "Daily Knowledge Mobile Web",
+  "short_name": "일일상식",
+  "description": "매일 새로운 상식을 제공하는 모바일 웹 앱",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8F9FA",
+  "theme_color": "#3B82F6",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
