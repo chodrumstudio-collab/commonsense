@@ -5,8 +5,12 @@ import { formatDateKorean, getTodayDateString, getRotatedFactsByDate } from '../
 
 export function HomePage() {
   const { facts, loading, error, refresh } = useFacts();
+  // 매 렌더링마다 현재 날짜를 가져와서 날짜가 바뀌었을 때 즉시 반영되도록 함
   const todayDateString = getTodayDateString();
   const formattedDate = formatDateKorean(todayDateString);
+  
+  // 디버깅: 날짜와 상식 개수 로그
+  console.log('HomePage 렌더링:', { todayDateString, factsCount: facts.length });
 
   // 날짜 기반으로 오늘의 상식 선택
   // useMemo를 사용하여 facts와 todayDateString이 변경될 때마다 재계산
