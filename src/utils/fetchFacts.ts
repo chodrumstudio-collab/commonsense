@@ -1,6 +1,7 @@
 import { Fact } from '../types';
 import { parseCSV } from './csvParser';
 import { facts as localFacts } from '../data/facts';
+import { getTodayDateString } from './dateUtils';
 
 // Google Sheets CSV URL
 // 사용자가 Google Sheets를 생성하고 "웹에 게시"한 후 여기에 URL을 넣으세요
@@ -62,6 +63,7 @@ function setCachedFacts(facts: Fact[]): void {
   try {
     localStorage.setItem('facts', JSON.stringify(facts));
     localStorage.setItem('lastFetch', Date.now().toString());
+    localStorage.setItem('lastFetchDate', getTodayDateString());
   } catch (error) {
     console.error('캐시 데이터 저장 오류:', error);
   }
@@ -80,23 +82,33 @@ function getLastFetchTime(): number | null {
 }
 
 /**
+ * 마지막 fetch 날짜 가져오기
+ */
+function getLastFetchDate(): string | null {
+  try {
+    return localStorage.getItem('lastFetchDate');
+  } catch (error) {
+    return null;
+  }
+}
+
+/**
  * Facts 데이터 가져오기 (캐시 확인 포함)
- * - 24시간 이내면 캐시된 데이터 사용
- * - 24시간 지났거나 캐시가 없으면 새로 fetch
+ * - 오늘 날짜와 마지막 fetch 날짜를 비교하여 날짜가 같으면 캐시 사용
+ * - 날짜가 다르거나 캐시가 없으면 새로 fetch
  */
 export async function getFacts(): Promise<Fact[]> {
   const cached = getCachedFacts();
-  const lastFetch = getLastFetchTime();
+  const lastFetchDate = getLastFetchDate();
+  const todayDate = getTodayDateString();
   
-  // 캐시 확인: 24시간 이내면 캐시 사용
-  const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
-  
-  if (cached && lastFetch && lastFetch > oneDayAgo) {
+  // 캐시 확인: 오늘 날짜와 마지막 fetch 날짜가 같으면 캐시 사용
+  if (cached && lastFetchDate === todayDate) {
     console.log('캐시된 데이터를 사용합니다.');
     return cached;
   }
   
-  // 새로 fetch
+  // 날짜가 바뀌었거나 캐시가 없으면 새로 fetch
   console.log('새 데이터를 가져옵니다.');
   const facts = await fetchDailyFactsFromSheet();
   setCachedFacts(facts);
