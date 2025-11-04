@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { FactCard } from '../components/FactCard';
 import { useFacts } from '../hooks/useFacts';
 import { formatDateKorean, getTodayDateString, getRotatedFactsByDate } from '../utils/dateUtils';
@@ -8,9 +9,10 @@ export function HomePage() {
   const formattedDate = formatDateKorean(todayDateString);
 
   // 날짜 기반으로 오늘의 상식 선택
+  // useMemo를 사용하여 facts와 todayDateString이 변경될 때마다 재계산
   // 방법 1: date 필드가 있으면 해당 날짜의 상식 필터링
   // 방법 2: date 필드가 없으면 날짜 기반 로테이션 사용
-  const todaysFacts = (() => {
+  const todaysFacts = useMemo(() => {
     if (facts.length === 0) return [];
 
     // date 필드가 있는 상식들 필터링
@@ -24,7 +26,7 @@ export function HomePage() {
 
     // date 필드가 없거나 오늘 날짜와 일치하는 것이 없으면 날짜 기반 로테이션 사용
     return getRotatedFactsByDate(facts, 5);
-  })();
+  }, [facts, todayDateString]);
 
   if (loading) {
     return (
