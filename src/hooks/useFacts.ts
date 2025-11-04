@@ -13,8 +13,20 @@ export function useFacts() {
       try {
         setLoading(true);
         setError(null);
-        const data = await getFacts();
-        setFacts(data);
+        
+        // 날짜 변경 확인: 페이지 로드 시 즉시 확인
+        const lastFetchDate = localStorage.getItem('lastFetchDate');
+        const todayDate = getTodayDateString();
+        
+        if (lastFetchDate && lastFetchDate !== todayDate) {
+          console.log(`날짜가 변경되었습니다: ${lastFetchDate} → ${todayDate}. 캐시를 무시하고 새 데이터를 가져옵니다.`);
+          // 날짜가 바뀌었으면 캐시 무시하고 강제로 새로고침
+          const data = await refreshFacts();
+          setFacts(data);
+        } else {
+          const data = await getFacts();
+          setFacts(data);
+        }
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.';
         setError(errorMessage);
