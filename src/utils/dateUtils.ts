@@ -47,6 +47,7 @@ export function getRotatedFactsByDate<T extends { id: string }>(
   if (facts.length === 0) return [];
   
   const dayOfYear = getDayOfYear();
+  const today = getTodayDateString();
   
   // 상식 개수를 count로 나눈 그룹 수 계산
   // 예: 100개 상식, 5개씩 보여주면 20개 그룹
@@ -59,13 +60,20 @@ export function getRotatedFactsByDate<T extends { id: string }>(
   // 그룹의 시작 인덱스 계산
   const startIndex = todayGroup * count;
   
+  // 디버깅: 날짜와 선택된 상식 정보 로그
+  console.log(`날짜 기반 로테이션: 날짜=${today}, 연중일수=${dayOfYear}, 그룹=${todayGroup}, 시작인덱스=${startIndex}`);
+  
   // result 배열에 count개 채우기
   const result: T[] = [];
+  const selectedIds: string[] = [];
   for (let i = 0; i < count; i++) {
     // 배열을 순환하면서 가져오기
     const index = (startIndex + i) % facts.length;
     result.push(facts[index]);
+    selectedIds.push(facts[index].id);
   }
+  
+  console.log(`선택된 상식 ID: [${selectedIds.join(', ')}]`);
   
   return result;
 }
